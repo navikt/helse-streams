@@ -9,7 +9,7 @@ val spekVersion = "1.2.1"
 val kluentVersion = "1.41"
 
 plugins {
-   kotlin("jvm") version "1.3.0"
+   kotlin("jvm") version "1.3.10"
    `java-library`
 }
 
