@@ -1,16 +1,19 @@
-val kafkaVersion = "2.0.0"
+val kafkaVersion = "2.0.1"
 val confluentVersion = "5.0.0"
 val orgJsonVersion = "20180813"
-val ktorVersion = "1.0.0-beta-3"
+val ktorVersion = "1.0.0"
 val prometheusVersion = "0.5.0"
 
 val junitJupiterVersion = "5.3.1"
 val spekVersion = "1.2.1"
 val kluentVersion = "1.41"
 
+version = 1
+
 plugins {
    kotlin("jvm") version "1.3.10"
    `java-library`
+   `maven-publish`
 }
 
 buildscript {
@@ -25,10 +28,9 @@ dependencies {
    api("org.apache.kafka:kafka-clients:$kafkaVersion")
    api("org.apache.kafka:kafka-streams:$kafkaVersion")
    api("org.json:json:$orgJsonVersion")
-
-   implementation("io.ktor:ktor-server-netty:$ktorVersion")
-   implementation("io.prometheus:simpleclient_common:$prometheusVersion")
-   implementation("io.prometheus:simpleclient_hotspot:$prometheusVersion")
+   api("io.ktor:ktor-server-netty:$ktorVersion")
+   api("io.prometheus:simpleclient_common:$prometheusVersion")
+   api("io.prometheus:simpleclient_hotspot:$prometheusVersion")
 
    testCompile("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
    testCompile("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
@@ -51,8 +53,8 @@ repositories {
 }
 
 java {
-   sourceCompatibility = JavaVersion.VERSION_1_10
-   targetCompatibility = JavaVersion.VERSION_1_10
+   sourceCompatibility = JavaVersion.VERSION_11
+   targetCompatibility = JavaVersion.VERSION_11
 }
 
 tasks.withType<Test> {
@@ -65,5 +67,27 @@ tasks.withType<Test> {
 tasks.withType<Wrapper> {
    gradleVersion = "4.10.2"
 }
+
+val sourcesJar by tasks.registering(Jar::class) {
+   classifier = "sources"
+   from(sourceSets["main"].allSource)
+}
+
+publishing {
+   repositories {
+      maven {
+         // TODO: point to repo on the internets
+         group = "no.nav.helse"
+         url = uri("$buildDir/repo")
+      }
+   }
+   publications {
+      register("mavenJava", MavenPublication::class) {
+         from(components["java"])
+         artifact(sourcesJar.get())
+      }
+   }
+}
+
 
 

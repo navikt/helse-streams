@@ -6,15 +6,39 @@ import org.apache.kafka.streams.kstream.*
 
 object Topics {
    val SYKEPENGESØKNADER_INN = Topic(
-      name = "privat-syfo-soknadSendt-v1",
+      name = "syfo-soknad-v1",
       keySerde = Serdes.String(),
       valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
    )
 
-   val SYKEPENGESØKNADER_UT = Topic(
+   val SYKEPENGEBEHANDLING = Topic(
       name = "privat-sykepengebehandling",
       keySerde = Serdes.String(),
       valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+   )
+
+   val VEDTAK_INFOTRYGD = Topic(
+      name = "privat-helse-infotrygd-vedtak",
+      keySerde = Serdes.String(),
+      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+
+   )
+
+   val VEDTAK_SYKEPENGER = Topic(
+      name = "aapen-helse-sykepenger-vedtak",
+      keySerde = Serdes.String(),
+      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+   )
+   val VEDTAK_KOMBINERT = Topic(
+      name = "privat-helse-vedtak-kombinert",
+      keySerde = Serdes.String(),
+      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+   )
+
+   val VEDTAK_RESULTAT = Topic(
+      name = "privat-helse-vedtak-resultat",
+      keySerde = Serdes.String(),
+      valueSerde = Serdes.String()
    )
 }
 

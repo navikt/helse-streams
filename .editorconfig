@@ -11,7 +11,5 @@ insert_final_newline = true
 [*.md]
 trim_trailing_whitespace = false
 
-[*.kotlin]
-indent_style = space
-indent_size = 3
+[*.kt]
 continuation_indent_size = 0
