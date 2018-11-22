@@ -25,7 +25,6 @@ buildscript {
 dependencies {
    compile(kotlin("stdlib"))
 
-   api("org.apache.kafka:kafka-clients:$kafkaVersion")
    api("org.apache.kafka:kafka-streams:$kafkaVersion")
    api("org.json:json:$orgJsonVersion")
    api("io.ktor:ktor-server-netty:$ktorVersion")
