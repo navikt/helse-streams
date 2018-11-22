@@ -1,9 +1,6 @@
 package no.nav.helse.streams
 
 import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
-import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
-import org.apache.avro.specific.SpecificRecord
-import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
@@ -12,19 +9,6 @@ import org.apache.kafka.streams.kstream.Produced
 
 private val strings = Serdes.String()
 private val json = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
-private fun <T: SpecificRecord> avroSerde(schemaRegistryUrl: String, isKeySerde: Boolean): Serde<T> {
-   val serde: Serde<T> = SpecificAvroSerde()
-   serde.configure(mapOf(
-      AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
-   ), isKeySerde)
-   return serde
-}
-private fun <T: SpecificRecord> avroValueSerde(schemaRegistryUrl: String): Serde<T> {
-   return avroSerde(schemaRegistryUrl, false)
-}
-private fun <T: SpecificRecord> avroKeySerde(schemaRegistryUrl: String): Serde<T> {
-   return avroSerde(schemaRegistryUrl, true)
-}
 
 object Topics {
    val SYKEPENGESØKNADER_INN = Topic(
@@ -63,7 +47,17 @@ object Topics {
    )
 }
 
-fun <K: Any, V: Any> StreamsBuilder.consumeTopic(topic: Topic<K, V>): KStream<K, V> {
+fun <K: Any, V: Any> StreamsBuilder.consumeTopic(topic: Topic<K, V>, schemaRegistryUrl: String?): KStream<K, V> {
+   schemaRegistryUrl?.let {
+      topic.keySerde.configure(mapOf(
+         AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
+      ), true)
+
+      topic.valueSerde.configure(mapOf(
+         AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
+      ), false)
+   }
+
    return stream<K, V>(
       topic.name, Consumed.with(topic.keySerde, topic.valueSerde)
    )
