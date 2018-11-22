@@ -26,6 +26,7 @@ dependencies {
    compile(kotlin("stdlib"))
 
    api("org.apache.kafka:kafka-streams:$kafkaVersion")
+   api("io.confluent:kafka-streams-avro-serde:$confluentVersion")
    api("org.json:json:$orgJsonVersion")
    api("io.ktor:ktor-server-netty:$ktorVersion")
    api("io.prometheus:simpleclient_common:$prometheusVersion")
@@ -47,6 +48,7 @@ dependencies {
 repositories {
    jcenter()
    mavenCentral()
+   maven("http://packages.confluent.io/maven/")
    maven("http://packages.confluent.io/maven/")
    maven("https://dl.bintray.com/kotlin/ktor")
 }

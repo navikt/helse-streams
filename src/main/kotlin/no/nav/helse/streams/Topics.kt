@@ -1,44 +1,65 @@
 package no.nav.helse.streams
 
-import org.apache.kafka.common.serialization.*
-import org.apache.kafka.streams.*
-import org.apache.kafka.streams.kstream.*
+import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+import org.apache.avro.specific.SpecificRecord
+import org.apache.kafka.common.serialization.Serde
+import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.streams.StreamsBuilder
+import org.apache.kafka.streams.kstream.Consumed
+import org.apache.kafka.streams.kstream.KStream
+import org.apache.kafka.streams.kstream.Produced
+
+private val strings = Serdes.String()
+private val json = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+private fun <T: SpecificRecord> avroSerde(schemaRegistryUrl: String, isKeySerde: Boolean): Serde<T> {
+   val serde: Serde<T> = SpecificAvroSerde()
+   serde.configure(mapOf(
+      AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
+   ), isKeySerde)
+   return serde
+}
+private fun <T: SpecificRecord> avroValueSerde(schemaRegistryUrl: String): Serde<T> {
+   return avroSerde(schemaRegistryUrl, false)
+}
+private fun <T: SpecificRecord> avroKeySerde(schemaRegistryUrl: String): Serde<T> {
+   return avroSerde(schemaRegistryUrl, true)
+}
 
 object Topics {
    val SYKEPENGESØKNADER_INN = Topic(
       name = "syfo-soknad-v1",
-      keySerde = Serdes.String(),
-      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+      keySerde = strings,
+      valueSerde = json
    )
 
    val SYKEPENGEBEHANDLING = Topic(
       name = "privat-sykepengebehandling",
       keySerde = Serdes.String(),
-      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+      valueSerde = json
    )
 
    val VEDTAK_INFOTRYGD = Topic(
       name = "privat-helse-infotrygd-vedtak",
-      keySerde = Serdes.String(),
-      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
-
+      keySerde = strings,
+      valueSerde = json
    )
 
    val VEDTAK_SYKEPENGER = Topic(
       name = "aapen-helse-sykepenger-vedtak",
-      keySerde = Serdes.String(),
-      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+      keySerde = strings,
+      valueSerde = json
    )
    val VEDTAK_KOMBINERT = Topic(
       name = "privat-helse-vedtak-kombinert",
-      keySerde = Serdes.String(),
-      valueSerde = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
+      keySerde = strings,
+      valueSerde = json
    )
 
    val VEDTAK_RESULTAT = Topic(
       name = "privat-helse-vedtak-resultat",
-      keySerde = Serdes.String(),
-      valueSerde = Serdes.String()
+      keySerde = strings,
+      valueSerde = strings
    )
 }
 
