@@ -29,7 +29,7 @@ script:
     git add build.gradle.kts
     git commit -m "Bump version" -m "Caused by $TRAVIS_BUILD_WEB_URL" --author "$ORIGINAL_COMMITTER"
 
-    git push https://x-access-token:$GH_TOKEN@github.com/navikt/helse-streams.git master
+    git push https://x-access-token:$GH_TOKEN@github.com/navikt/helse-streams.git HEAD:master
   fi
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
