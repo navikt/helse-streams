@@ -27,7 +27,7 @@ script:
 
     awk '($1=="version" && $3 ~ /[0-9]+/){$3=$3+1} 1' build.gradle.kts > build.gradle.new && mv build.gradle.new build.gradle.kts
     git add build.gradle.kts
-    git commit -m "Bump version" -m "Caused by $TRAVIS_BUILD_WEB_URL" --author "$ORIGINAL_COMMITTER"
+    git commit -m "Bump version [skip ci]" -m "Caused by $TRAVIS_BUILD_WEB_URL" --author "$ORIGINAL_COMMITTER"
 
     git push https://x-access-token:$GH_TOKEN@github.com/navikt/helse-streams.git HEAD:master
   fi
