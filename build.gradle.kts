@@ -8,7 +8,7 @@ val junitJupiterVersion = "5.3.1"
 val spekVersion = "1.2.1"
 val kluentVersion = "1.41"
 
-version = 1
+version = 2
 
 plugins {
    kotlin("jvm") version "1.3.10"
