@@ -47,6 +47,10 @@ object Topics {
    )
 }
 
+fun <K : Any, V : Any> StreamsBuilder.consumeTopic(topic: Topic<K, V>): KStream<K, V> {
+   return consumeTopic(topic, null)
+}
+
 fun <K: Any, V: Any> StreamsBuilder.consumeTopic(topic: Topic<K, V>, schemaRegistryUrl: String?): KStream<K, V> {
    schemaRegistryUrl?.let {
       topic.keySerde.configure(mapOf(
