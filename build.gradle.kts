@@ -111,8 +111,10 @@ publishing {
          artifact(sourcesJar.get())
          artifact(javadocJar.get())
 
+         artifactId = "streams"
+
          pom {
-            name.set(project.name)
+            name.set("streams")
             description.set("Stream service library for Helse")
             url.set("https://github.com/navikt/helse-streams")
             withXml {
