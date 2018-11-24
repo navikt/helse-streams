@@ -82,7 +82,7 @@ tasks.withType<Wrapper> {
 }
 
 val dokka = tasks.withType<DokkaTask> {
-   outputFormat = "javadoc"
+   outputFormat = "html"
    outputDirectory = "$buildDir/javadoc"
 }
 
