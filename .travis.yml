@@ -30,7 +30,7 @@ script:
     git add build.gradle.kts
     git commit -m "Bump version [skip ci]" -m "Caused by $TRAVIS_BUILD_WEB_URL" --author "$ORIGINAL_COMMITTER"
 
-   ./gradlew bintrayUpload
+   ./gradlew signMavenJavaPublication bintrayUpload
 
     git push https://x-access-token:$GH_TOKEN@github.com/navikt/helse-streams.git HEAD:master
   fi
