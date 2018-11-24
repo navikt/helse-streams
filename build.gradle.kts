@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.jfrog.bintray.gradle.BintrayExtension
-import com.jfrog.bintray.gradle.tasks.RecordingCopyTask
 import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kafkaVersion = "2.0.1"
 val confluentVersion = "5.0.0"
@@ -21,9 +20,9 @@ plugins {
    `java-library`
    `maven-publish`
    signing
-   id("com.jfrog.bintray") version "1.8.4"
    id("com.github.johnrengelman.shadow") version "4.0.3"
    id("org.jetbrains.dokka") version "0.9.17"
+   id("io.codearte.nexus-staging") version "0.12.0"
 }
 
 buildscript {
@@ -33,7 +32,7 @@ buildscript {
 }
 
 dependencies {
-   compile(kotlin("stdlib"))
+   implementation(kotlin("stdlib"))
 
    compile("org.apache.kafka:kafka-streams:$kafkaVersion")
    compile("io.confluent:kafka-streams-avro-serde:$confluentVersion")
@@ -69,6 +68,9 @@ java {
    sourceCompatibility = JavaVersion.VERSION_11
    targetCompatibility = JavaVersion.VERSION_11
 }
+
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
 tasks.withType<Test> {
    useJUnitPlatform()
@@ -110,6 +112,9 @@ publishing {
          artifact(javadocJar.get())
 
          pom {
+            name.set(project.name)
+            description.set("Stream service library for Helse")
+            url.set("https://github.com/navikt/helse-streams")
             withXml {
                asNode().appendNode("packaging", "jar")
             }
@@ -134,6 +139,21 @@ publishing {
          }
       }
    }
+
+   repositories {
+      maven {
+         credentials {
+            username = System.getenv("OSSRH_JIRA_USERNAME")
+            password = System.getenv("OSSRH_JIRA_PASSWORD")
+         }
+         val version = "${project.version}"
+         url = if (version.endsWith("-SNAPSHOT")) {
+            uri("https://oss.sonatype.org/content/repositories/snapshots")
+         } else {
+            uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+         }
+      }
+   }
 }
 
 ext["signing.gnupg.keyName"] = System.getenv("GPG_KEY_NAME")
@@ -145,36 +165,8 @@ signing {
    sign(publishing.publications["mavenJava"])
 }
 
-bintray {
-   user = System.getenv("BINTRAY_USER")
-   key = System.getenv("BINTRAY_KEY")
-
-   setPublications("mavenJava")
-
-   publish = true
-   override = true
-
-   filesSpec(delegateClosureOf<RecordingCopyTask> {
-      from("${buildDir}/libs") {
-         include("*.jar.asc")
-      }
-      from("${buildDir}/publications/mavenJava") {
-         include("pom-default.xml.asc")
-         rename("pom-default.xml.asc", "${project.name}-${project.version}.pom.asc")
-      }
-      into("${(project.group as String).replace(".", "/")}/${project.name}/${project.version}")
-   })
-
-   with(pkg){
-      repo = "maven"
-      name = "${project.group}.${project.name}"
-      userOrg = "navikt"
-      setLicenses("MIT")
-      vcsUrl = "https://github.com/navikt/helse-streams.git"
-      desc = "Stream service library for Helse"
-
-      with(version) {
-         name = "${project.version}"
-      }
-   }
+nexusStaging {
+   username = System.getenv("OSSRH_JIRA_USERNAME")
+   password = System.getenv("OSSRH_JIRA_PASSWORD")
+   packageGroup = "no.nav"
 }
