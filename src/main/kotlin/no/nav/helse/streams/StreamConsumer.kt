@@ -37,11 +37,11 @@ class StreamConsumer(val consumerName: String,
       embeddedServer(Netty, httpPort) {
          routing {
 
-            get("/isAlive") {
+            get("/isalive") {
                call.respondText("ALIVE", ContentType.Text.Plain)
             }
 
-            get("/isReady") {
+            get("/isready") {
                call.respondText("READY", ContentType.Text.Plain)
             }
 
