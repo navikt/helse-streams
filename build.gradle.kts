@@ -69,8 +69,13 @@ java {
    targetCompatibility = JavaVersion.VERSION_11
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
+tasks.named<KotlinCompile>("compileKotlin") {
+   kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.named<KotlinCompile>("compileTestKotlin") {
+   kotlinOptions.jvmTarget = "1.8"
+}
 
 tasks.withType<Test> {
    useJUnitPlatform()
