@@ -11,12 +11,21 @@ private val strings = Serdes.String()
 private val json = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
 
 object Topics {
+   /**
+    * Input to the whole process. Contains the original application. Consumed by `splitt` and
+    * qualifying applications are sent to other topics.
+    */
    val SYKEPENGESØKNADER_INN = Topic(
       name = "syfo-soknad-v1",
       keySerde = strings,
       valueSerde = json
    )
 
+   /**
+    * Produced by `splitt` and `spinne`, (at least) consumed by `spinne`.
+    *
+    * Contains applications enriched with supporting information.
+    */
    val SYKEPENGEBEHANDLING = Topic(
       name = "privat-sykepengebehandling",
       keySerde = Serdes.String(),
