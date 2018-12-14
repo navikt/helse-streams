@@ -25,11 +25,12 @@ class StreamConsumer(val consumerName: String,
    private val app = naisHttpChecks()
 
    fun start() {
+      addShutdownHook()
+
       DefaultExports.initialize()
       app.start(wait = false)
       streams.start()
       log.info("Started stream consumer $consumerName")
-      addShutdownHook()
    }
 
    fun stop(){
