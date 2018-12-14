@@ -13,7 +13,7 @@ val spekVersion = "1.2.1"
 val kluentVersion = "1.41"
 
 group = "no.nav.helse"
-version = 14
+version = 15
 
 plugins {
    kotlin("jvm") version "1.3.11"
