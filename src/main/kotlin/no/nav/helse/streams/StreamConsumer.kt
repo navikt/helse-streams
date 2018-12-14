@@ -13,6 +13,7 @@ import io.prometheus.client.exporter.common.TextFormat
 import io.prometheus.client.hotspot.DefaultExports
 import org.apache.kafka.streams.KafkaStreams
 import org.slf4j.LoggerFactory
+import java.util.concurrent.TimeUnit
 
 class StreamConsumer(val consumerName: String,
                      val streams: KafkaStreams,
@@ -21,9 +22,11 @@ class StreamConsumer(val consumerName: String,
    private val collectorRegistry: CollectorRegistry = CollectorRegistry.defaultRegistry
    private val log = LoggerFactory.getLogger(consumerName)
 
+   private val app = naisHttpChecks()
+
    fun start() {
       DefaultExports.initialize()
-      naisHttpChecks()
+      app.start(wait = false)
       streams.start()
       log.info("Started stream consumer $consumerName")
       addShutdownHook()
@@ -31,9 +34,10 @@ class StreamConsumer(val consumerName: String,
 
    fun stop(){
       streams.close()
+      app.stop(5, 60, TimeUnit.SECONDS)
    }
 
-   private fun naisHttpChecks() {
+   private fun naisHttpChecks() =
       embeddedServer(Netty, httpPort) {
          routing {
 
@@ -52,17 +56,20 @@ class StreamConsumer(val consumerName: String,
                }
             }
          }
-      }.start(wait = false)
-   }
+      }
 
    private fun addShutdownHook() {
+      streams.setUncaughtExceptionHandler{ _, ex ->
+         log.error("Caught exception in stream, exiting", ex)
+         stop()
+      }
       Thread.currentThread().setUncaughtExceptionHandler { _, ex ->
          log.error("Caught exception, exiting", ex)
-         streams.close()
+         stop()
       }
 
       Runtime.getRuntime().addShutdownHook(Thread {
-         streams.close()
+         stop()
       })
    }
 
