@@ -2,6 +2,7 @@ package no.nav.helse.streams
 
 import io.ktor.application.call
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.response.respondText
 import io.ktor.response.respondTextWriter
 import io.ktor.routing.get
@@ -43,7 +44,11 @@ class StreamConsumer(val consumerName: String,
          routing {
 
             get("/isalive") {
-               call.respondText("ALIVE", ContentType.Text.Plain)
+               if (!streams.state().isRunning) {
+                  call.respondText("NOT ALIVE", ContentType.Text.Plain, HttpStatusCode.ServiceUnavailable)
+               } else {
+                  call.respondText("ALIVE", ContentType.Text.Plain)
+               }
             }
 
             get("/isready") {
