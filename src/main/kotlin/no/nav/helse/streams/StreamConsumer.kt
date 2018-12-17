@@ -65,6 +65,15 @@ class StreamConsumer(val consumerName: String,
       }
 
    private fun addShutdownHook() {
+      streams.setStateListener { newState, oldState ->
+         log.info("From state={} to state={}", oldState, newState)
+
+         if (newState == KafkaStreams.State.ERROR) {
+            // if the stream has died there is no reason to keep spinning
+            log.warn("No reason to keep living, closing stream")
+            stop()
+         }
+      }
       streams.setUncaughtExceptionHandler{ _, ex ->
          log.error("Caught exception in stream, exiting", ex)
          stop()
