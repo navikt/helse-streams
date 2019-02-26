@@ -16,7 +16,7 @@ object Topics {
     * qualifying applications are sent to other topics.
     */
    val SYKEPENGESØKNADER_INN = Topic(
-      name = "syfo-soknad-v1",
+      name = "syfo-soknad-v2",
       keySerde = strings,
       valueSerde = json
    )
