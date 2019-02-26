@@ -4,7 +4,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <modelVersion>4.0.0</modelVersion>
    <groupId>no.nav.helse</groupId>
-   <artifactId>helse-streams</artifactId>
+   <artifactId>streams</artifactId>
    <version>unspecified</version>
    <name>helse-streams</name>
    <description>Boilerplate for helse Kafka apps</description>
