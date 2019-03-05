@@ -54,6 +54,13 @@ object Topics {
       keySerde = strings,
       valueSerde = strings
    )
+
+   val SYKEPENGEBEHANDLINGSFEIL = Topic(
+      name = "privat-helse-sykepenger-behandlingsfeil",
+      keySerde = Serdes.String(),
+      valueSerde = json
+   )
+
 }
 
 fun <K : Any, V : Any> StreamsBuilder.consumeTopic(topic: Topic<K, V>): KStream<K, V> {
