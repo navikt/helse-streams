@@ -40,7 +40,7 @@ class JsonDeserializer: Deserializer<JsonNode> {
    override fun deserialize(topic: String?, data: ByteArray?): JsonNode? {
       return data?.let {
          try {
-            defaultObjectMapper.readValue(it, JsonNode::class.java)
+            defaultObjectMapper.readTree(it)
          } catch (e: Exception) {
             log.warn("Not a valid json",e)
             null
