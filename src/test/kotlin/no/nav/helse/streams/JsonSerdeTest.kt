@@ -3,7 +3,7 @@ package no.nav.helse.streams
 import org.amshove.kluent.*
 import org.jetbrains.spek.api.*
 import org.jetbrains.spek.api.dsl.*
-import org.json.*
+
 
 object JsonSerdeTest: Spek({
 
@@ -43,7 +43,7 @@ object JsonSerdeTest: Spek({
 
       given("non-null input") {
          it("returns a byte array containing json"){
-            val serialized = JsonSerializer().serialize("my-topic", JSONObject(completeJson))
+            val serialized = JsonSerializer().serialize("my-topic", defaultObjectMapper.readTree(completeJson))
             serialized.shouldNotBeNull()
          }
       }
