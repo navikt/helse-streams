@@ -11,9 +11,18 @@ private val strings = Serdes.String()
 private val json = Serdes.serdeFrom(JsonSerializer(), JsonDeserializer())
 
 object Topics {
+
    /**
-    * Input to the whole process. Contains the original application. Consumed by `splitt` and
-    * qualifying applications are sent to other topics.
+    * Legacy-input to the whole process. Contains the original application.
+    */
+   val SYKEPENGESØKNADER_INN_LEGACY = Topic(
+   name = "syfo-soknad-v1",
+   keySerde = strings,
+   valueSerde = json
+   )
+
+   /**
+    * Input to the whole process. Contains the original application.
     */
    val SYKEPENGESØKNADER_INN = Topic(
       name = "syfo-soknad-v2",
